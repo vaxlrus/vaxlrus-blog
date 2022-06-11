@@ -11,6 +11,14 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $fillable = [
+        'username',
+        'email',
+        'password',
+        'name',
+        'is_admin',
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -38,5 +46,11 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function changeAdminRole(bool $roleStatus)
+    {
+        $this->is_admin = (bool) $roleStatus;
+        $this->save();
     }
 }
