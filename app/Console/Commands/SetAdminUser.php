@@ -22,16 +22,6 @@ class SetAdminUser extends Command
     protected $description = 'Add new admin user to web site';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
@@ -41,7 +31,7 @@ class SetAdminUser extends Command
         $userId = (int) $this->argument('userId');
         $removeAdminRole = $this->option('removeRole');
 
-        $user = User::findOrFail($userId);
+        $user = User::find($userId);
 
         if (! $user)
         {
@@ -49,7 +39,7 @@ class SetAdminUser extends Command
             return Command::INVALID;
         }
 
-        if ($removeAdminRole === true)
+        if ($removeAdminRole)
         {
             $user->changeAdminRole(false);
             $user->save();
