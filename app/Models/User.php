@@ -51,6 +51,5 @@ class User extends Authenticatable
     public function changeAdminRole(bool $roleStatus): void
     {
         $this->is_admin = $roleStatus;
-        $this->save();
     }
 }
