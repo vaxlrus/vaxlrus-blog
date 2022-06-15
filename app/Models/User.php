@@ -48,9 +48,9 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    public function changeAdminRole(bool $roleStatus)
+    public function changeAdminRole(bool $roleStatus): void
     {
-        $this->is_admin = (bool) $roleStatus;
+        $this->is_admin = $roleStatus;
         $this->save();
     }
 }
