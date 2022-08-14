@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Comment\UnableToDeleteException;
+use App\Exceptions\NotFoundException;
 use App\Models\Post;
-use App\Models\User;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
 
 class PostCommentsController extends Controller
 {
@@ -32,19 +32,15 @@ class PostCommentsController extends Controller
      */
     public function destroy($slug, $id, CommentService $commentService)
     {
-        $commentId = intval($id);
-
-        $user = User::find(auth()->id());
-
-        if ( $user->assertIsAdmin() )
-        {
-            $commentService->delete($commentId, true);
+        try {
+            $commentService->delete(intval($id));
         }
-        else
-        {
-            $commentService->delete($commentId);
+        catch (UnableToDeleteException|NotFoundException $e) {
+            return back()->withErrors([
+                'deletion_unavailable' => $e->getMessage()
+            ]);
         }
 
-        return back();
+        return redirect()->back();
     }
 }
