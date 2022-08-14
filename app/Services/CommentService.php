@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\Comment\NotFoundException;
 use App\Exceptions\Comment\UnableToDeleteException;
-use App\Exceptions\NotFoundException;
 use App\Models\Comment;
 
 class CommentService
