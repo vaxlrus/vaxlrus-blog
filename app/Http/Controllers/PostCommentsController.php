@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Comment\NotFoundException;
 use App\Exceptions\Comment\UnableToDeleteException;
-use App\Exceptions\NotFoundException;
 use App\Models\Post;
 use App\Services\CommentService;
 
