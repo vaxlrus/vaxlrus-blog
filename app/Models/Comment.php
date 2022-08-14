@@ -26,24 +26,38 @@ class Comment extends Model
     }
 
     /**
-     * Delete comment
-     *
-     * @return void
-     */
-    public function delete(): void
-    {
-        $this->delete();
-    }
-
-    /**
      * Define that comment create date past 1 hour
      *
      * @return bool
      */
     public function isCanBeDeleted(): bool
     {
-        $timePeriod = self::COMMENT_DELETION_PERIOD . " m";
+        $currentAppUser = User::find(auth()->id());
 
-        return time() <= strtotime($timePeriod, strtotime($this->created_at));
+        // Если пользователь не авторизован в системе
+        if (!$currentAppUser) {
+            return false;
+        }
+
+        $commentDeletableUntill = strtotime($this->created_at) + self::COMMENT_DELETION_PERIOD * 60;
+        $commentAuthor = Comment::find($this->id)->author;
+
+        // Если текущий пользователь админ, то может удалять любые комментарии
+        if ($currentAppUser->isAdmin()) {
+            return true;
+        }
+
+        // Если это обычный пользователь и это не его комментарий
+        if ($currentAppUser->id != $commentAuthor->id) {
+            return false;
+        }
+
+        // Если это обычный пользователь, это его комментарий, то определить доступно ли удаление по времени
+        return time() <= $commentDeletableUntill;
+    }
+
+    public function isCanNotBeDeleted(): bool
+    {
+        return !$this->isCanBeDeleted();
     }
 }
