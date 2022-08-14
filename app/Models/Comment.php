@@ -11,7 +11,7 @@ class Comment extends Model
     /**
      * @var int Comment deletion period (in minutes)
      */
-    private int $commentDeletionPeriod = 60;
+    CONST COMMENT_DELETION_PERIOD = 60;
 
     use HasFactory;
 
@@ -28,24 +28,21 @@ class Comment extends Model
     /**
      * Delete comment
      *
-     * @return bool
+     * @return void
      */
-    public function delete(): bool
+    public function delete(): void
     {
-        if ( !$this->delete() )
-        {
-            throw new DatabaseException('Comment not deleted');
-        }
+        $this->delete();
     }
 
     /**
-     * Assert that comment create date past 1 hour
+     * Define that comment create date past 1 hour
      *
      * @return bool
      */
-    public function assertIsCanBeDeleted(): bool
+    public function isCanBeDeleted(): bool
     {
-        $timePeriod = "+{$this->commentDeletionPeriod} m";
+        $timePeriod = self::COMMENT_DELETION_PERIOD . " m";
 
         return time() <= strtotime($timePeriod, strtotime($this->created_at));
     }
