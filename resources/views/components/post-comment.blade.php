@@ -16,7 +16,7 @@
                 </p>
             </header>
 
-            @if ( $comment->isCanBeDeleted() )
+            @if ( $comment->isCanBeDeletedByUser(auth()->user()) )
                 <form method="POST" action="{{ route('post.comment.delete', [$comment->post->slug, $comment->id]) }}">
                     @csrf
                     @method('delete')

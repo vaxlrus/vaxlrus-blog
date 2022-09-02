@@ -10,7 +10,7 @@ class Comment extends Model
     /**
      * @var int Comment deletion period (in minutes)
      */
-    CONST COMMENT_DELETION_PERIOD = 60;
+    public const COMMENT_DELETION_PERIOD = 60;
 
     use HasFactory;
 
@@ -27,36 +27,30 @@ class Comment extends Model
     /**
      * Define that comment create date past 1 hour
      *
+     * @param User User who tries to delete comment
      * @return bool
      */
-    public function isCanBeDeleted(): bool
+    public function isCanBeDeletedByUser(User $user): bool
     {
-        $currentAppUser = User::find(auth()->id());
-
         // Если пользователь не авторизован в системе
-        if (!$currentAppUser) {
+        if (!$user) {
             return false;
         }
 
         $commentDeletableUntill = strtotime($this->created_at) + self::COMMENT_DELETION_PERIOD * 60;
-        $commentAuthor = Comment::find($this->id)->author;
+        $commentAuthor = $this->author;
 
         // Если текущий пользователь админ, то может удалять любые комментарии
-        if ($currentAppUser->isAdmin()) {
+        if ($user->isAdmin()) {
             return true;
         }
 
         // Если это обычный пользователь и это не его комментарий
-        if ($currentAppUser->id != $commentAuthor->id) {
+        if ($user->id != $commentAuthor->id) {
             return false;
         }
 
         // Если это обычный пользователь, это его комментарий, то определить доступно ли удаление по времени
         return time() <= $commentDeletableUntill;
-    }
-
-    public function isCanNotBeDeleted(): bool
-    {
-        return !$this->isCanBeDeleted();
     }
 }

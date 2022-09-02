@@ -25,7 +25,7 @@ Route::prefix('posts')->group(function() {
     Route::post('{post:slug}/delete', [PostController::class, 'destroy'])
         ->name('post.delete');
 
-    Route::delete('{post:slug}/comment/{comment:id}/delete', [PostCommentsController::class, 'destroy'])
+    Route::delete('{post:slug}/comment/{comment:id}/', [PostCommentsController::class, 'destroy'])
         ->name('post.comment.delete')
         ->where('id', '[0-9]+');
 });

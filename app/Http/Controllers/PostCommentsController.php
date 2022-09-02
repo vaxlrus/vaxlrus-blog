@@ -26,14 +26,14 @@ class PostCommentsController extends Controller
     /**
      * Удаление комментария
      *
-     * @param string $slug
      * @param int $id Идентификатор комментария
      * @param CommentService $commentService
      */
     public function destroy($slug, $id, CommentService $commentService)
     {
         try {
-            $commentService->delete(intval($id));
+            $user = auth()->user();
+            $commentService->delete(intval($id), $user);
         }
         catch (UnableToDeleteException|NotFoundException $e) {
             return back()->withErrors([
