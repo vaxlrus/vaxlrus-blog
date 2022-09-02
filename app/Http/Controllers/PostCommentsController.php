@@ -29,7 +29,7 @@ class PostCommentsController extends Controller
      * @param int $id Идентификатор комментария
      * @param CommentService $commentService
      */
-    public function destroy($slug, $id, CommentService $commentService)
+    public function destroy(CommentService $commentService, $slug, $id)
     {
         try {
             $user = auth()->user();
