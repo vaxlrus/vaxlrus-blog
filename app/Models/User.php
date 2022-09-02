@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         $this->is_admin = $roleStatus;
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
 }
