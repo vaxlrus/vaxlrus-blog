@@ -5,13 +5,15 @@ namespace App\Services;
 use App\Exceptions\Comment\NotFoundException;
 use App\Exceptions\Comment\UnableToDeleteException;
 use App\Models\Comment;
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class CommentService
 {
     /**
      * Delete comment
      */
-    public function delete(int $id, $user): void
+    public function delete(int $id, User|Authenticatable $user): void
     {
         // Get comment model
         $comment = Comment::find($id);

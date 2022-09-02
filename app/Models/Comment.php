@@ -30,23 +30,23 @@ class Comment extends Model
      * @param User User who tries to delete comment
      * @return bool
      */
-    public function isCanBeDeletedByUser(User $user): bool
+    public function isCanBeDeletedByUser(?User $user): bool
     {
         // Если пользователь не авторизован в системе
         if (!$user) {
             return false;
         }
 
-        $commentDeletableUntill = strtotime($this->created_at) + self::COMMENT_DELETION_PERIOD * 60;
-        $commentAuthor = $this->author;
-
         // Если текущий пользователь админ, то может удалять любые комментарии
         if ($user->isAdmin()) {
             return true;
         }
 
+        $commentDeletableUntill = strtotime($this->created_at) + self::COMMENT_DELETION_PERIOD * 60;
+        $commentAuthor = $this->author;
+
         // Если это обычный пользователь и это не его комментарий
-        if ($user->id != $commentAuthor->id) {
+        if ($user->id !== $commentAuthor->id) {
             return false;
         }
 
