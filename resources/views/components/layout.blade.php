@@ -57,6 +57,12 @@
                         @endadmin
 
                         <x-dropdown-item
+                            href="{{ route('showProfile') }}"
+                        >
+                            Show Profile
+                        </x-dropdown-item>
+
+                        <x-dropdown-item
                             href="#"
                             x-data="{}"
                             @click.prevent="document.querySelector('#logout-form').submit()"

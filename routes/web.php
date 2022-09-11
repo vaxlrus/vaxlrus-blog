@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PostCommentsController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionsController;
 use Illuminate\Support\Facades\Route;
@@ -37,13 +38,19 @@ Route::middleware('guest')->group(function() {
     });
 
     Route::prefix('login')->group(function() {
-        Route::get('/', [SessionsController::class, 'create']);
+        Route::get('/', [SessionsController::class, 'create'])
+            ->name('login');
         Route::post('/', [SessionsController::class, 'store']);
     });
 });
 
+// Profile & account manipulations
 Route::middleware('auth')->group(function() {
     Route::post('logout', [SessionsController::class, 'destroy']);
+    Route::get('profile', [ProfileController::class, 'show'])
+        ->name('showProfile');
+    Route::delete('delete', [ProfileController::class, 'deleteAccount'])
+        ->name('deleteUserProfile');
 });
 
 // Admin Section
