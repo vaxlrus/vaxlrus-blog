@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,8 @@ class UserDeletingService
      * @return void
      */
     public function completlyDeleteUserAccounts(): void {
-        User::withTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
+        DB::beginTransaction();
+        User::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
+        Comment::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
     }
 }

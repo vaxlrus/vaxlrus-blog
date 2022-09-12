@@ -22,7 +22,7 @@ class UserRestorationService
      */
     public function restoreAccount(string $email, string $password): void
     {
-        $user = User::withTrashed()->where('email', $email)->first();
+        $user = User::onlyTrashed()->where('email', $email)->first();
         if (!Hash::check($password, $user->password)) {
             throw new InvalidPasswordException('Не верный пароль пользователя');
         }
@@ -41,7 +41,7 @@ class UserRestorationService
      */
     public function isAccountRestorable(string $email): bool
     {
-        $user = User::withTrashed()->where('email', $email)->first();
+        $user = User::onlyTrashed()->where('email', $email)->first();
 
         // Если по указанной почте вообще не существует пользователя
         if (!$user) {
