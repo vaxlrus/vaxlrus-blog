@@ -14,7 +14,7 @@ class SessionsController extends Controller
         return view('sessions.create');
     }
 
-    public function store(UserDeletingService $userDeletingService, UserRestorationService $userRestorationService)
+    public function store(UserRestorationService $userRestorationService)
     {
         $attributes = request()->validate([
             'email' => 'required|email',
