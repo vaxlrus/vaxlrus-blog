@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Services\UserDeletingService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
 
 class ProfileController extends Controller
 {
@@ -11,7 +12,7 @@ class ProfileController extends Controller
     {
         return view('profile.index', [
             'user' => auth()->user(),
-            'profileRecoverPeriod' => date("d.m.Y", strtotime("+" . UserDeletingService::PROFILE_RESTORATION_DAYS . " days"))
+            'profileRecoverPeriod' => Carbon::now()->addDays(UserDeletingService::PROFILE_RESTORATION_DAYS)->format('d.m.Y')
         ]);
     }
 
