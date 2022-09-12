@@ -33,5 +33,6 @@ class UserDeletingService
         DB::beginTransaction();
         User::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
         Comment::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
+        DB::commit();
     }
 }
