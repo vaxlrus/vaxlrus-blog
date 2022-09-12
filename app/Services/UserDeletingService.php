@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class UserDeletingService
 {
@@ -16,8 +17,10 @@ class UserDeletingService
      * @return void
      */
     public function delete(User|Authenticatable $user): void {
-        $user->delete();
+        DB::beginTransaction();
         $user->comments()->delete();
+        $user->delete();
+        DB::commit();
     }
 
     /**
