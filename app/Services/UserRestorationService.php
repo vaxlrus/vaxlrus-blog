@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Exceptions\InvalidPasswordException;
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserRestorationService
 {
@@ -13,12 +15,18 @@ class UserRestorationService
      * Восстанавливает аккаунт
      *
      * @param string $email
+     * @param string $password
      * @return void
+     * @throws InvalidPasswordException
      */
-    public function restoreAccount(string $email): void {
-        User::withTrashed()->where('email', $email)->restore();
-        $user = User::where('email', $email)->first();
+    public function restoreAccount(string $email, string $password): void
+    {
+        $user = User::withTrashed()->where('email', $email)->first();
+        if (!Hash::check($password, $user->password)) {
+            throw new InvalidPasswordException('Не верный пароль пользователя');
+        }
 
+        $user->restore();
         Comment::withTrashed()->where('user_id', $user->id)->restore();
     }
 
@@ -28,11 +36,12 @@ class UserRestorationService
      * @param string $email
      * @return bool
      */
-    public function isAccountRestorable(string $email): bool {
+    public function isAccountRestorable(string $email): bool
+    {
         $user = User::withTrashed()->where('email', $email)->first();
 
         // Если по указанной почте вообще не существует пользователя
-        if (! $user) {
+        if (!$user) {
             return false;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidPasswordException;
 use App\Services\UserDeletingService;
 use App\Services\UserRestorationService;
 use Illuminate\Validation\ValidationException;
@@ -25,7 +26,15 @@ class SessionsController extends Controller
                 'email' => 'Аккаунт не возможно восстановить'
             ]);
         }
-        $userRestorationService->restoreAccount($attributes['email']);
+
+        try {
+            $userRestorationService->restoreAccount($attributes['email'], $attributes['password']);
+        }
+        catch (InvalidPasswordException $e) {
+            throw ValidationException::withMessages([
+                'email' => 'Your provided credentials could not be verified.'
+            ]);
+        }
 
         if (! auth()->attempt($attributes)) {
             throw ValidationException::withMessages([
