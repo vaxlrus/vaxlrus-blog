@@ -31,6 +31,11 @@ class UserRestorationService
     public function isAccountRestorable(string $email): bool {
         $user = User::withTrashed()->where('email', $email)->first();
 
+        // Если по указанной почте вообще не существует пользователя
+        if (! $user) {
+            return false;
+        }
+
         if ($user->deleted_at >= now()->subDays(self::PROFILE_RESTORATION_DAYS)) {
             return true;
         }
