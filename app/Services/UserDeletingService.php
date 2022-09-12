@@ -15,7 +15,8 @@ class UserDeletingService
      * @param User|Authenticatable $user
      * @return void
      */
-    public function delete(User|Authenticatable $user): void {
+    public function delete(User|Authenticatable $user): void
+    {
         DB::beginTransaction();
         $user->comments()->delete();
         $user->delete();
@@ -27,7 +28,8 @@ class UserDeletingService
      *
      * @return void
      */
-    public function completlyDeleteUserAccounts(): void {
+    public function completlyDeleteUserAccounts(): void
+    {
         DB::beginTransaction();
         User::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
         Comment::onlyTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
