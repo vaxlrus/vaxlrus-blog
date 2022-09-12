@@ -20,7 +20,7 @@ class SessionsController extends Controller
             'password' => 'required'
         ]);
 
-        if (! $userDeletingService->isAccountRestorable($attributes['email'])) {
+        if (! $userRestorationService->isAccountRestorable($attributes['email'])) {
             throw ValidationException::withMessages([
 //                'email' => 'Your provided credentials could not be verified.'
                 'email' => 'Аккаунт не возможно восстановить'

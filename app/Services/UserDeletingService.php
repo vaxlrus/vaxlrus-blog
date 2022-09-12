@@ -21,27 +21,11 @@ class UserDeletingService
     }
 
     /**
-     * Проверяет возможность восстановления удаленного аккаунта
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function isAccountRestorable(string $email): bool {
-        $user = User::withTrashed()->where('email', $email)->first();
-
-        if ($user->deleted_at >= now()->subDays(self::PROFILE_RESTORATION_DAYS)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Окончательно удаляет пользователей и их комментарии которые уже нельзя восстановить
      *
      * @return void
      */
     public function completlyDeleteUserAccounts(): void {
-        User::withTrashed()->whereDate('deleted_at', '<', now()->subDays(UserDeletingService::PROFILE_RESTORATION_DAYS))->forceDelete();
+        User::withTrashed()->whereDate('deleted_at', '<', now()->subDays(UserRestorationService::PROFILE_RESTORATION_DAYS))->forceDelete();
     }
 }

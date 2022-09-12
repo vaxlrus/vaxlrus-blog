@@ -7,6 +7,8 @@ use App\Models\User;
 
 class UserRestorationService
 {
+    public const PROFILE_RESTORATION_DAYS = 14;
+
     /**
      * Восстанавливает аккаунт
      *
@@ -18,5 +20,21 @@ class UserRestorationService
         $user = User::where('email', $email)->first();
 
         Comment::withTrashed()->where('user_id', $user->id)->restore();
+    }
+
+    /**
+     * Проверяет возможность восстановления удаленного аккаунта
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function isAccountRestorable(string $email): bool {
+        $user = User::withTrashed()->where('email', $email)->first();
+
+        if ($user->deleted_at >= now()->subDays(self::PROFILE_RESTORATION_DAYS)) {
+            return true;
+        }
+
+        return false;
     }
 }
