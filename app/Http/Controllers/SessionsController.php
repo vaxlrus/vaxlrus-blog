@@ -23,7 +23,7 @@ class SessionsController extends Controller
 
         if (! $userRestorationService->isAccountRestorable($attributes['email'])) {
             throw ValidationException::withMessages([
-                'email' => 'Аккаунт не возможно восстановить'
+                'email' => 'Your provided credentials could not be verified.'
             ]);
         }
 
