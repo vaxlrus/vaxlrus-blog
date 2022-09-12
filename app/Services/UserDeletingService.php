@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class UserDeletingService
 {
-    public const PROFILE_RESTORATION_DAYS = 14;
-
     /**
      * Удалить пользователя и его комментарии
      *
