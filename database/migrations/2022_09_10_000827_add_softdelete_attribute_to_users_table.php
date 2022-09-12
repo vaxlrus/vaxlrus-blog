@@ -15,6 +15,7 @@ class AddSoftdeleteAttributeToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 
@@ -27,6 +28,7 @@ class AddSoftdeleteAttributeToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropSoftDeletes();
+            $table->dropIndex('deleted_at');
         });
     }
 }
