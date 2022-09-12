@@ -48,10 +48,6 @@ class UserRestorationService
             return false;
         }
 
-        if ($user->deleted_at >= now()->subDays(self::PROFILE_RESTORATION_DAYS)) {
-            return true;
-        }
-
-        return false;
+        return $user->deleted_at >= now()->subDays(self::PROFILE_RESTORATION_DAYS);
     }
 }
