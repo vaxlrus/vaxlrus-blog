@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\InvalidPasswordException;
 use App\Models\Comment;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserRestorationService
@@ -26,8 +27,10 @@ class UserRestorationService
             throw new InvalidPasswordException('Не верный пароль пользователя');
         }
 
+        DB::beginTransaction();
         $user->restore();
         Comment::withTrashed()->where('user_id', $user->id)->restore();
+        DB::commit();
     }
 
     /**
