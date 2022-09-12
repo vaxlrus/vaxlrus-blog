@@ -26,7 +26,7 @@ class AddIndexToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex('deleted_at');
+            $table->dropIndex('users_deleted_at_index');
         });
     }
 }

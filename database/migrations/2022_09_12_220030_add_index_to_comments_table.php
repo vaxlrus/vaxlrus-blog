@@ -26,7 +26,7 @@ class AddIndexToCommentsTable extends Migration
     public function down()
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->dropIndex('deleted_at');
+            $table->dropIndex('comments_deleted_at_index');
         });
     }
 }
