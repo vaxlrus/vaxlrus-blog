@@ -93,4 +93,24 @@ class PostViewsLoggerService
             $this->dbRepo->increaseTodayViewsCount($this->post);
         }
     }
+
+    /**
+     * Получить количество просмотров на текущий день
+     *
+     * @return int
+     */
+    public function getTodayViews(Post $post): int
+    {
+        return $this->dbRepo->getTodayViewsCount($post);
+    }
+
+    /**
+     * Получить количество просмотров за все время
+     *
+     * @return int
+     */
+    public function getTotalViews(Post $post): int
+    {
+        return $this->dbRepo->getTotalViewsCount($post);
+    }
 }

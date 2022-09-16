@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\PostViewEvent;
 use App\Models\Post;
+use App\Services\PostViewsLogging\PostViewsLoggerService;
 
 class PostController extends Controller
 {
@@ -16,12 +17,18 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(Post $post)
+    public function show(PostViewsLoggerService $service, Post $post)
     {
         PostViewEvent::dispatch($post);
 
         return view('posts.show', [
-            'post' => $post
+            'post' => $post,
+            'post_data' => [
+                'views' => [
+                    'today' => $service->getTodayViews($post),
+                    'total' => $service->getTotalViews($post)
+                ]
+            ]
         ]);
     }
 }

@@ -36,4 +36,14 @@ class PostViewsDbRepo
         // Увеличить сегодняшнее количество просмотров
         PostViews::where('post_id', $post->id)->increment('today', 1);
     }
+
+    public function getTotalViewsCount(Post $post): int
+    {
+        return PostViews::where('post_id', $post->id)->first()->count ?? 0;
+    }
+
+    public function getTodayViewsCount(Post $post): int
+    {
+        return PostViews::where('post_id', $post->id)->first()->today ?? 0;
+    }
 }
