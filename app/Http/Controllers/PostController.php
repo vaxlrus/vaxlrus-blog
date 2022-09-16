@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\PostViewEvent;
 use App\Models\Post;
-use App\Models\PostViews;
-use App\Services\PostViewsLoggerService;
-use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {

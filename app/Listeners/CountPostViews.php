@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\PostViewEvent;
-use App\Services\PostViewsLoggerService;
+use App\Services\PostViewsLogging\PostViewsLoggerService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CountPostViews implements ShouldQueue
 {
