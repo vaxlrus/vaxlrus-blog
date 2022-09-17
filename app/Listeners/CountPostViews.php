@@ -28,6 +28,6 @@ class CountPostViews implements ShouldQueue
      */
     public function handle(PostViewEvent $event)
     {
-        $this->service->handle($event->post);
+        $this->service->handle($event->post, $event->ip, $event->user);
     }
 }

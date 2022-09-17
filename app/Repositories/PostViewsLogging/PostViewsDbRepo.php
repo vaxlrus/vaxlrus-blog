@@ -7,32 +7,28 @@ use App\Models\PostViews;
 
 class PostViewsDbRepo
 {
-    private function handleNewPostViews(Post $post): void
+    public function isPostHaveViews(Post $post): bool
     {
-        if (PostViews::where('post_id', $post->id)->exists()) {
-            return;
-        }
+        return PostViews::where('post_id', $post->id)->exists();
+    }
 
-        $post->views()->insert([
+    public function handleViewsForNewPost(Post $post): bool
+    {
+        return $post->views()->insert([
             'post_id' => $post->id,
-            'count' => 1,
-            'today' => 1
+            'count' => 0,
+            'today' => 0
         ]);
-
     }
 
     public function increaseTotalViewsCount(Post $post): void
     {
-        $this->handleNewPostViews($post);
-
         // Увеличить общее количество просмотров
         PostViews::where('post_id', $post->id)->increment('count', 1);
     }
 
     public function increaseTodayViewsCount(Post $post): void
     {
-        $this->handleNewPostViews($post);
-
         // Увеличить сегодняшнее количество просмотров
         PostViews::where('post_id', $post->id)->increment('today', 1);
     }

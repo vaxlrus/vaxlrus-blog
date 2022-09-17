@@ -9,11 +9,14 @@ use App\Repositories\PostViewsLogging\PostViewsDbRepo;
 use App\Repositories\PostViewsLogging\PostViewsRedisRepo;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 class PostViewsLoggerService
 {
     private Post $post;
+    private string $ip;
+    private ?Authenticatable $user;
     private PostViewsRedisRepo $redisRepo;
     private PostViewsDbRepo $dbRepo;
 
@@ -29,9 +32,11 @@ class PostViewsLoggerService
      * @param Post $post
      * @return void
      */
-    public function handle(Post $post): void
+    public function handle(Post $post, string $ip, Authenticatable $user): void
     {
         $this->post = $post;
+        $this->ip = $ip;
+        $this->user = $user;
 
         $this->guestsHandler();
         $this->authUsersHandler();
@@ -44,16 +49,16 @@ class PostViewsLoggerService
      */
     private function guestsHandler(): void
     {
-        if (!auth()->guest()) {
+        if (isset($this->user)) {
             return;
         }
 
         // Если IP адрес просматривает пост не впервые
-        if ($this->redisRepo->getLastViewedIp() === Request::ip()) {
+        if ($this->redisRepo->getLastViewedIp() === $this->ip) {
             return;
         }
 
-        $this->redisRepo->setLastViewedIp(Request::ip());
+        $this->redisRepo->setLastViewedIp($this->ip);
         $this->increasePostViewsCount();
     }
 
@@ -64,16 +69,16 @@ class PostViewsLoggerService
      */
     private function authUsersHandler(): void
     {
-        if (!$user = auth()->user()) {
+        if (! isset($this->user)) {
             return;
         }
 
         // Если пользователь просматривает пост не впервые
-        if ($this->redisRepo->isUserSawPost($user)) {
+        if ($this->redisRepo->isUserSawPost($this->user)) {
             return;
         }
 
-        $this->redisRepo->markPostViewedByUser($user);
+        $this->redisRepo->markPostViewedByUser($this->user);
         $this->increasePostViewsCount();
     }
 
@@ -84,6 +89,11 @@ class PostViewsLoggerService
      */
     private function increasePostViewsCount(): void
     {
+        // Если пост никто не просматривал, иницилизировать добавление данных
+        if (! $this->dbRepo->isPostHaveViews($this->post)) {
+            $this->dbRepo->handleViewsForNewPost($this->post);
+        }
+
         // Увеличить общее число просмотров
         $this->dbRepo->increaseTotalViewsCount($this->post);
 

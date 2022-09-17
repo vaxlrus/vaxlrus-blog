@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PostViewEvent;
 use App\Models\Post;
 use App\Services\PostViewsLogging\PostViewsLoggerService;
+use Illuminate\Support\Facades\Request;
 
 class PostController extends Controller
 {
@@ -17,9 +18,9 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(PostViewsLoggerService $service, Post $post)
+    public function show(Request $request, PostViewsLoggerService $service, Post $post)
     {
-        PostViewEvent::dispatch($post);
+        PostViewEvent::dispatch($post, Request::ip(), auth()->user());
 
         return view('posts.show', [
             'post' => $post,
