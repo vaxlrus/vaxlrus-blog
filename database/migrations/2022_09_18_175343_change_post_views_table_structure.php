@@ -20,7 +20,7 @@ class ChangePostViewsTableStructure extends Migration
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('ip');
-            $table->date('view_date')->default(Carbon::now());
+            $table->date('view_date');
         });
     }
 

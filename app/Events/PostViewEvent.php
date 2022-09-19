@@ -21,7 +21,7 @@ class PostViewEvent
      *
      * @return void
      */
-    public function __construct(Post $post, string $ip, Authenticatable $user)
+    public function __construct(Post $post, string $ip, Authenticatable $user = null)
     {
         $this->post = $post;
         $this->ip = $ip;

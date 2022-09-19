@@ -9,8 +9,14 @@ class PostViews extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'post_id';
+    protected $primaryKey = 'id';
     protected $table = 'posts_views';
-    public $incrementing = false;
+    protected $fillable = [
+        'user_id',
+        'post_id',
+        'ip',
+        'date'
+    ];
+    public $incrementing = true;
     public $timestamps = false;
 }
