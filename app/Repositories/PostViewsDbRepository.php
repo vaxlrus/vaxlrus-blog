@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Post;
-use App\Models\PostViews;
+use App\Models\PostView;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -17,22 +17,19 @@ class PostViewsDbRepository
      */
     public function getTotalViewsCount(Post $post): int
     {
-        return PostViews::where('post_id', '=', $post->id)->count();
+        return PostView::where('post_id', '=', $post->id)->count();
     }
 
     /**
      * Получить количество просмотров за сегодня
      *
      * @param Post $post
+     * @param Carbon $date
      * @return int
      */
-    public function getTodayViewsCount(Post $post, Carbon $date = null): int
+    public function getTodayViewsCount(Post $post, Carbon $date): int
     {
-        if (!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        return PostViews::where('post_id', '=', $post->id)->where('view_date', '=', $date)->count();
+        return PostView::where('post_id', '=', $post->id)->where('view_date', '=', $date->toDateString())->count();
     }
 
     /**
@@ -40,11 +37,11 @@ class PostViewsDbRepository
      *
      * @param Authenticatable $user
      * @param Post $post
-     * @return PostViews|null
+     * @return PostView|null
      */
-    public function getPostViewDataByUser(Authenticatable $user, Post $post): ?PostViews
+    public function getPostViewDataByUser(Authenticatable $user, Post $post): ?PostView
     {
-        return PostViews::where('post_id', $post->id)
+        return PostView::where('post_id', $post->id)
                         ->where('user_id', $user->id)
                         ->first();
     }
@@ -54,11 +51,11 @@ class PostViewsDbRepository
      *
      * @param string $ip
      * @param Post $post
-     * @return PostViews|null
+     * @return PostView|null
      */
-    public function getPostViewDataByIp(string $ip, Post $post): ?PostViews
+    public function getPostViewDataByIp(string $ip, Post $post): ?PostView
     {
-        return PostViews::where('post_id', $post->id)
+        return PostView::where('post_id', $post->id)
                         ->where('ip', $ip)
                         ->first();
     }
@@ -69,20 +66,16 @@ class PostViewsDbRepository
      * @param Post $post
      * @param Authenticatable $user
      * @param string $ip
-     * @param Carbon|null $date
+     * @param Carbon $date
      * @return void
      */
-    public function setPostViewByUser(Post $post, Authenticatable $user, string $ip, Carbon $date = null): void
+    public function setPostViewByUser(Post $post, Authenticatable $user, string $ip, Carbon $date): void
     {
-        if (!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        PostViews::insert([
+        PostView::insert([
             'post_id' => $post->id,
             'user_id' => $user->getAuthIdentifier(),
             'ip' => $ip,
-            'view_date' => $date
+            'view_date' => $date->toDateString()
         ]);
     }
 
@@ -91,20 +84,16 @@ class PostViewsDbRepository
      *
      * @param Post $post
      * @param string $ip
-     * @param Carbon|null $date
+     * @param Carbon $date
      * @return void
      */
-    public function setPostViewByIp(Post $post, string $ip, Carbon $date = null)
+    public function setPostViewByIp(Post $post, string $ip, Carbon $date)
     {
-        if (!$date) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        PostViews::insert([
+        PostView::insert([
             'user_id' => null,
             'post_id' => $post->id,
             'ip' => $ip,
-            'view_date' => $date
+            'view_date' => $date->toDateString()
         ]);
     }
 }

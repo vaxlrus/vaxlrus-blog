@@ -5,12 +5,10 @@ namespace App\Services\PostViewsLogging;
 use App\Models\Post;
 use App\Repositories\PostViewsDbRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Carbon;
 
 class PostViewsLoggerService
 {
-    private Post $post;
-    private string $ip;
-    private ?Authenticatable $user;
     private PostViewsDbRepository $dbRepo;
 
     public function __construct(PostViewsDbRepository $dbRepo)
@@ -22,63 +20,69 @@ class PostViewsLoggerService
      * Залоггировать новый просмотр у поста
      *
      * @param Post $post
+     * @param string $ip
+     * @param Authenticatable|null $user
      * @return void
      */
-    public function handle(Post $post, string $ip, Authenticatable $user = null): void
+    public function logNewView(Post $post, string $ip, ?Authenticatable $user): void
     {
-        $this->post = $post;
-        $this->ip = $ip;
-        $this->user = $user;
-
-        if ($this->doesClientSawPost()) {
+        if ($this->doesClientSawPost($post, $ip, $user)) {
             return;
         }
 
-        $this->markClientAsViewedPost();
+        $this->markClientAsViewedPost($post, $ip, $user);
     }
 
     /**
      * Определить видел ли клиент пост раньше
      *
+     * @param Post $post
+     * @param string $ip
+     * @param Authenticatable|null $user
      * @return bool
      */
-    private function doesClientSawPost(): bool
+    private function doesClientSawPost(Post $post, string $ip, ?Authenticatable $user): bool
     {
-        if (isset($this->user)) {
-            return (bool)$this->dbRepo->getPostViewDataByUser($this->user, $this->post);
+        if (isset($user)) {
+            return (bool)$this->dbRepo->getPostViewDataByUser($user, $post);
         }
 
-        return (bool)$this->dbRepo->getPostViewDataByIp($this->ip, $this->post);
+        return (bool)$this->dbRepo->getPostViewDataByIp($ip, $post);
     }
 
     /**
      * Отметить клиента как просмотревшего пост
      *
+     * @param Post $post
+     * @param string $ip
+     * @param Authenticatable|null $user
      * @return void
      */
-    private function markClientAsViewedPost(): void
+    private function markClientAsViewedPost(Post $post, string $ip, ?Authenticatable $user): void
     {
-        if (isset($this->user)) {
-            $this->dbRepo->setPostViewByUser($this->post, $this->user, $this->ip);
+        if (isset($user)) {
+            $this->dbRepo->setPostViewByUser($post, $user, $ip, Carbon::now());
             return;
         }
 
-        $this->dbRepo->setPostViewByIp($this->post, $this->ip);
+        $this->dbRepo->setPostViewByIp($post, $ip, Carbon::now());
     }
 
     /**
      * Получить количество просмотров на текущий день
      *
+     * @param Post $post
      * @return int
      */
     public function getTodayViews(Post $post): int
     {
-        return $this->dbRepo->getTodayViewsCount($post);
+        return $this->dbRepo->getTodayViewsCount($post, Carbon::now());
     }
 
     /**
      * Получить количество просмотров за все время
      *
+     * @param Post $post
      * @return int
      */
     public function getTotalViews(Post $post): int

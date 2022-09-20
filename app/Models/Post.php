@@ -50,6 +50,6 @@ class Post extends Model
 
     public function views()
     {
-        return $this->belongsTo(PostViews::class, 'post_id');
+        return $this->belongsTo(PostView::class, 'post_id');
     }
 }
