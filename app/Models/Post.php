@@ -47,4 +47,9 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function views()
+    {
+        return $this->belongsTo(PostView::class, 'post_id');
+    }
 }

@@ -46,6 +46,8 @@
                 </h1>
 
                 <div class="space-y-4 lg:text-lg leading-loose">{!! $post->body !!}</div>
+
+                <div class="mt-10">Post views: {{ $post_data['views']['today'] }}/{{ $post_data['views']['total'] }}</div>
             </div>
 
             <section class="col-span-8 col-start-5 mt-10 space-y-6">

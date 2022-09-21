@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostViewEvent;
 use App\Models\Post;
-use Illuminate\Validation\Rule;
+use App\Services\PostViewsLogging\PostViewsLoggerService;
+use Illuminate\Support\Facades\Request;
 
 class PostController extends Controller
 {
@@ -16,10 +18,18 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(Post $post)
+    public function show(Request $request, PostViewsLoggerService $service, Post $post)
     {
+        PostViewEvent::dispatch($post, Request::ip(), auth()->user());
+
         return view('posts.show', [
-            'post' => $post
+            'post' => $post,
+            'post_data' => [
+                'views' => [
+                    'today' => $service->getTodayViews($post),
+                    'total' => $service->getTotalViews($post)
+                ]
+            ]
         ]);
     }
 }
